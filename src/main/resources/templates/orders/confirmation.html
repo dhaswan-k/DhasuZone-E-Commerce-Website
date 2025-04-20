@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - DhasuZone</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="/" class="navbar-brand">Dhasu<span>Zone</span></a>
+                
+                <button class="navbar-toggler">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a href="/products" class="nav-link">Products</a>
+                        <div class="dropdown-menu">
+                            <a href="/products/category/Electronics" class="dropdown-item">Electronics</a>
+                            <a href="/products/category/Clothing" class="dropdown-item">Clothing</a>
+                            <a href="/products/category/Books" class="dropdown-item">Books</a>
+                            <a href="/products/category/Home & Kitchen" class="dropdown-item">Home & Kitchen</a>
+                            <a href="/products/category/Sports & Outdoors" class="dropdown-item">Sports & Outdoors</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/about" class="nav-link">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/contact" class="nav-link">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/cart" class="nav-link">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-count">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/login" class="nav-link">
+                            <i class="fas fa-user"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Order Confirmation -->
+    <section class="order-confirmation">
+        <div class="container">
+            <div class="confirmation-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            
+            <h1 class="confirmation-title">Thank You for Your Order!</h1>
+            
+            <p class="confirmation-message">
+                Your order has been placed successfully. We've sent a confirmation email with all the details.
+                You can also track your order status in your account dashboard.
+            </p>
+            
+            <div class="order-details">
+                <h2>Order Details</h2>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Order Number:</span>
+                    <span class="detail-value" th:text="${order.id}">DZ10001</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Order Date:</span>
+                    <span class="detail-value" th:text="${#temporals.format(order.orderDate, 'dd MMM yyyy, HH:mm')}">25 May 2025, 14:30</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Payment Method:</span>
+                    <span class="detail-value" th:text="${order.paymentMethod != null ? order.paymentMethod : 'Razorpay'}">Razorpay</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Order Status:</span>
+                    <span class="detail-value" th:text="${order.status}">Paid</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Total Amount:</span>
+                    <span class="detail-value" th:text="'₹' + ${order.total}">₹23,597.64</span>
+                </div>
+            </div>
+            
+            <div class="mt-3 d-flex justify-content-center">
+                <a href="/" class="btn btn-secondary mr-2">Continue Shopping</a>
+                <a href="/orders" class="btn btn-primary">View All Orders</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Recommended Products -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title text-center">You Might Also Like</h2>
+            
+            <div class="product-grid">
+                <div class="product-card" th:each="i : ${#numbers.sequence(1, 4)}">
+                    <div class="product-image">
+                        <img src="https://source.unsplash.com/random/300x300?product" alt="Product">
+                        <div class="product-wishlist" data-product-id="1001" onclick="addToWishlist(this.getAttribute('data-product-id'))">
+                            <i class="far fa-heart"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="product-content">
+                        <div class="product-category">Category</div>
+                        <h3 class="product-title">Product Name</h3>
+                        
+                        <div class="product-price">
+                            <span>₹9,999</span>
+                        </div>
+                        
+                        <div class="product-rating">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <span class="count">42 reviews</span>
+                        </div>
+                        
+                        <div class="product-actions">
+                            <a href="#" class="btn-add-to-cart">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <a href="/" class="footer-logo">Dhasu<span>Zone</span></a>
+                    <p>Your premium shopping destination for all your needs. We offer high-quality products at competitive prices.</p>
+                    
+                    <div class="social-icons">
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <h4 class="footer-title">Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/products">Products</a></li>
+                        <li><a href="/about">About Us</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                        <li><a href="/products?sale=true">Special Offers</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4 class="footer-title">Customer Service</h4>
+                    <ul>
+                        <li><a href="/faq">FAQ</a></li>
+                        <li><a href="/shipping">Shipping Policy</a></li>
+                        <li><a href="/returns">Returns & Refunds</a></li>
+                        <li><a href="/terms">Terms & Conditions</a></li>
+                        <li><a href="/privacy">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-contact">
+                    <h4 class="footer-title">Contact Us</h4>
+                    <ul>
+                        <li>
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>123 Shopping Street, Bengaluru, India</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-phone-alt"></i>
+                            <span>+91 1800-123-4567</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-envelope"></i>
+                            <span>info@dhasuzone.com</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-clock"></i>
+                            <span>Mon-Sat: 9:00 AM - 8:00 PM</span>
+                        </li>
+                    </ul>
+                    
+                    <div class="payment-methods">
+                        <div class="payment-method">
+                            <img src="https://cdn-icons-png.flaticon.com/128/196/196578.png" alt="Visa">
+                        </div>
+                        <div class="payment-method">
+                            <img src="https://cdn-icons-png.flaticon.com/128/196/196561.png" alt="MasterCard">
+                        </div>
+                        <div class="payment-method">
+                            <img src="https://cdn-icons-png.flaticon.com/128/217/217455.png" alt="RuPay">
+                        </div>
+                        <div class="payment-method">
+                            <img src="https://cdn-icons-png.flaticon.com/128/174/174861.png" alt="UPI">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; 2025 DhasuZone. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Chatbot -->
+    <div class="chatbot">
+        <div class="chatbot-toggle">
+            <i class="fas fa-comments"></i>
+        </div>
+        
+        <div class="chatbot-window">
+            <div class="chatbot-header">
+                <div class="chatbot-title">
+                    <i class="fas fa-robot"></i>
+                    <span>DhasuBot</span>
+                </div>
+                <div class="chatbot-close">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            
+            <div class="chatbot-messages">
+                <!-- Messages will be added here dynamically -->
+            </div>
+            
+            <div class="chatbot-input">
+                <input type="text" placeholder="Type your message...">
+                <button><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+    
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

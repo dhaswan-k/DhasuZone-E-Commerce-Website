@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${product.name} + ' - DhasuZone'">Product - DhasuZone</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="/" class="navbar-brand">Dhasu<span>Zone</span></a>
+                
+                <button class="navbar-toggler">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a href="/products" class="nav-link active">Products</a>
+                        <div class="dropdown-menu">
+                            <a href="/products/category/Electronics" class="dropdown-item">Electronics</a>
+                            <a href="/products/category/Clothing" class="dropdown-item">Clothing</a>
+                            <a href="/products/category/Books" class="dropdown-item">Books</a>
+                            <a href="/products/category/Home & Kitchen" class="dropdown-item">Home & Kitchen</a>
+                            <a href="/products/category/Sports & Outdoors" class="dropdown-item">Sports & Outdoors</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/about" class="nav-link">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/contact" class="nav-link">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/cart" class="nav-link">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-count">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/login" class="nav-link">
+                            <i class="fas fa-user"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Breadcrumb -->
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="/">Home</a> /
+            <a href="/products">Products</a> /
+            <a th:href="@{'/products/category/' + ${product.category}}" th:text="${product.category}">Category</a> /
+            <span th:text="${product.name}">Product Name</span>
+        </div>
+    </div>
+    
+    <!-- Product Detail -->
+    <section class="product-detail">
+        <div class="container">
+            <div class="product-detail-grid">
+                <div class="product-gallery">
+                    <div class="product-main-image">
+                        <img th:src="${product.imageUrl}" th:alt="${product.name}">
+                    </div>
+                    
+                    <div class="product-thumbnails">
+                        <div class="product-thumbnail active">
+                            <img th:src="${product.imageUrl}" th:alt="${product.name}">
+                        </div>
+                        <div class="product-thumbnail">
+                            <img src="https://source.unsplash.com/random/300x300?product" alt="Thumbnail">
+                        </div>
+                        <div class="product-thumbnail">
+                            <img src="https://source.unsplash.com/random/300x300?product=2" alt="Thumbnail">
+                        </div>
+                        <div class="product-thumbnail">
+                            <img src="https://source.unsplash.com/random/300x300?product=3" alt="Thumbnail">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-info">
+                    <h1 th:text="${product.name}">Product Name</h1>
+                    
+                    <div class="product-meta">
+                        <span>Brand: <strong th:text="${product.brand}">Brand</strong></span>
+                        <span>Category: <strong th:text="${product.category}">Category</strong></span>
+                        <span>Availability: <strong th:text="${product.stock > 0 ? 'In Stock' : 'Out of Stock'}">In Stock</strong></span>
+                    </div>
+                    
+                    <div class="product-rating-detail">
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <span class="count" th:text="${product.reviews.size() + ' reviews'}">42 reviews</span>
+                    </div>
+                    
+                    <div class="product-price-detail" th:if="${product.onSale}">
+                        <span class="sale-price" th:text="'₹' + ${product.salePrice}">₹9,999</span>
+                        <span class="original-price" th:text="'₹' + ${product.price}">₹12,999</span>
+                        <span class="discount-label" th:text="'-' + ${#numbers.formatDecimal(((product.price.subtract(product.salePrice)).multiply(new java.math.BigDecimal(100))).divide(product.price, 0, java.math.RoundingMode.HALF_UP), 1, 0) + '%'}">-20%</span>
+                    </div>
+                    
+                    <div class="product-price-detail" th:unless="${product.onSale}">
+                        <span th:text="'₹' + ${product.price}">₹9,999</span>
+                    </div>
+                    
+                    <div class="product-description" th:text="${product.description}">
+                        Product description goes here.
+                    </div>
+                    
+                    <form th:action="@{'/cart/add/' + ${product.id}}" method="post">
+                        <div class="product-quantity">
+                            <span class="quantity-label">Quantity:</span>
+                            <div class="quantity-input">
+                                <button type="button" class="quantity-btn">-</button>
+                                <input type="number" name="quantity" class="quantity-value" value="1" min="1" max="10">
+                                <button type="button" class="quantity-btn">+</button>
+                            </div>
+                        </div>
+                        
+                        <div class="product-actions">
+                            <button type="submit" class="btn btn-primary btn-lg btn-add-to-cart-detail">Add to Cart</button>
+                            <div class="btn-wishlist" onclick="addToWishlist(${product.id})">
+                                <i class="far fa-heart"></i>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <div class="product-meta-info">
+                        <div class="meta-item">
+                            <div class="meta-label">SKU:</div>
+                            <div class="meta-value" th:text="'DZ-' + ${product.id}">DZ-1234</div>
+                        </div>
+                        <div class="meta-item">
+                            <div class="meta-label">Tags:</div>
+                            <div class="meta-value" th:text="${#strings.listJoin(product.tags, ', ')}">tag1, tag2, tag3</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="product-tabs">
+                <div class="tabs-header">
+                    <div class="tab-link active" data-tab="tab-description">Description</div>
+                    <div class="tab-link" data-tab="tab-specifications">Specifications</div>
+                    <div class="tab-link" data-tab="tab-reviews">Reviews</div>
+                </div>
+                
+                <div class="tab-content active" id="tab-description">
+                    <h3>Product Description</h3>
+                    <p th:text="${product.description}">Product description goes here.</p>
+                </div>
+                
+                <div class="tab-content" id="tab-specifications">
+                    <h3>Specifications</h3>
+                    <div class="specifications-list">
+                        <div class="specification-item" th:each="spec : ${product.specifications}">
+                            <div class="specification-value" th:text="${spec}">Specification value</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="tab-reviews">
+                    <h3>Customer Reviews</h3>
+                    
+                    <div class="review-list">
+                        <div class="review-item" th:each="review : ${product.reviews}">
+                            <div class="review-avatar">
+                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Reviewer">
+                            </div>
+                            <div class="review-content">
+                                <div class="review-header">
+                                    <div class="review-author" th:text="${review.username}">Customer Name</div>
+                                    <div class="review-date" th:text="${#temporals.format(review.dateCreated, 'dd MMM yyyy')}">12 May 2023</div>
+                                </div>
+                                <div class="review-rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="review-text" th:text="${review.comment}">Review comment goes here.</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="review-form">
+                        <h4>Write a Review</h4>
+                        <form action="#" method="post">
+                            <div class="form-group">
+                                <label for="review-rating" class="form-label">Rating</label>
+                                <div class="rating-select" id="review-rating">
+                                    <div class="rating-star" data-rating="1"><i class="far fa-star"></i></div>
+                                    <div class="rating-star" data-rating="2"><i class="far fa-star"></i></div>
+                                    <div class="rating-star" data-rating="3"><i class="far fa-star"></i></div>
+                                    <div class="rating-star" data-rating="4"><i class="far fa-star"></i></div>
+                                    <div class="rating-star" data-rating="5"><i class="far fa-star"></i></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="review-comment" class="form-label">Comment</label>
+                                <textarea id="review-comment" name="comment" class="form-control" rows="5" placeholder="Share your experience with this product"></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Submit Review</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Related Products -->
+            <div class="related-products section">
+                <h2 class="section-title">Related Products</h2>
+                
+                <div class="product-grid">
+                    <div class="product-card" th:each="i : ${#numbers.sequence(1, 4)}">
+                        <div class="product-image">
+                            <img src="https://source.unsplash.com/random/300x300?product" alt="Related Product">
+                            <div class="product-wishlist" data-product-id="1001" onclick="addToWishlist(this.getAttribute('data-product-id'))">
+                                <i class="far fa-heart"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="product-content">
+                            <div class="product-category" th:text="${product.category}">Category</div>
+                            <h3 class="product-title">Related Product Name</h3>
+                            
+                            <div class="product-price">
+                                <span>₹7,999</span>
+                            </div>
+                            
+                            <div class="product-rating">
+                                <div class="stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                                <span class="count">24 reviews</span>
+                            </div>
+                            
+                            <div class="product-actions">
+                                <a href="#" class="btn-add-to-cart">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <a href="/" class="footer-logo">Dhasu<span>Zone</span></a>
+                    <p>Your premium shopping destination for all your needs. We offer high-quality products at competitive prices.</p>
+                    
+                    <div class="social-icons">
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <h4 class="footer-title">Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/products">Products</a></li>
+                        <li><a href="/about">About Us</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                        <li><a href="/products?sale=true">Special Offers</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4 class="footer-title">Customer Service</h4>
+                    <ul>
+                        <li><a href="/faq">FAQ</a></li>
+                        <li><a href="/shipping">Shipping Policy</a></li>
+                        <li><a href="/returns">Returns & Refunds</a></li>
+                        <li><a href="/terms">Terms & Conditions</a></li>
+                        <li><a href="/privacy">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-contact">
+                    <h4 class="footer-title">Contact Us</h4>
+                    <ul>
+                        <li>
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>123 Shopping Street, Bengaluru, India</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-phone-alt"></i>
+                            <span>+91 1800-123-4567</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-envelope"></i>
+                            <span>info@dhasuzone.com</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-clock"></i>
+                            <span>Mon-Sat: 9:00 AM - 8:00 PM</span>
+                        </li>
+                    </ul>
+                    
+                    <div class="payment-methods">
+                        <div class="payment-method">
+                            <img src="https://cdn-icons-png.flaticon.com/128/196/196578.png" alt="Visa">
+                        </div>
+                        <div class="payment-method">
+                            <img src="https://cdn-icons-png.flaticon.com/128/196/196561.png" alt="MasterCard">
+                        </div>
+                        <div class="payment-method">
+                            <img src="https://cdn-icons-png.flaticon.com/128/217/217455.png" alt="RuPay">
+                        </div>
+                        <div class="payment-method">
+                            <img src="https://cdn-icons-png.flaticon.com/128/174/174861.png" alt="UPI">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; 2025 DhasuZone. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Chatbot -->
+    <div class="chatbot">
+        <div class="chatbot-toggle">
+            <i class="fas fa-comments"></i>
+        </div>
+        
+        <div class="chatbot-window">
+            <div class="chatbot-header">
+                <div class="chatbot-title">
+                    <i class="fas fa-robot"></i>
+                    <span>DhasuBot</span>
+                </div>
+                <div class="chatbot-close">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            
+            <div class="chatbot-messages">
+                <!-- Messages will be added here dynamically -->
+            </div>
+            
+            <div class="chatbot-input">
+                <input type="text" placeholder="Type your message...">
+                <button><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+    
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

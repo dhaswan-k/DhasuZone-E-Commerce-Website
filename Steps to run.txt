@@ -1,0 +1,66 @@
+To run this e-commerce application, you'll need to install the following software:
+
+Required Software:
+
+Java Development Kit (JDK) 17 or higher
+
+Download from: https://www.oracle.com/java/technologies/downloads/
+MySQL Server 8.0 or higher
+
+Download from: https://dev.mysql.com/downloads/mysql/
+MySQL Workbench (Optional, for database management)
+
+Download from: https://dev.mysql.com/downloads/workbench/
+Apache Maven
+
+Download from: https://maven.apache.org/download.cgi
+Steps to Run the Application:
+
+Install MySQL:
+
+Install MySQL Server
+During installation, set root password
+Note down the password for later use
+Database Setup:
+
+Open MySQL Workbench or MySQL command line
+Create a new database:
+
+CREATE DATABASE dhasuzone;
+Configure Application:
+
+Open src/main/resources/application.properties
+Uncomment the database configuration
+Update username and password with your MySQL credentials
+Build and Run:
+
+Open terminal in project directory
+Build the project:
+
+mvn clean install
+Run the application:
+
+mvn spring-boot:run
+Access the Application:
+
+Open web browser
+Visit: http://localhost:8080
+Additional Notes:
+
+The application uses port 8080 by default
+Make sure no other application is using this port
+Initial data is loaded automatically from JSON files
+For production, switch to MySQL by uncommenting database configuration
+System Requirements:
+
+Minimum 4GB RAM
+2GB free disk space
+Internet connection for downloading dependencies
+The application will start with sample data and all features will be functional, including:
+
+Product catalog
+Shopping cart
+User authentication
+Payment integration
+AI chatbot
+Reviews system

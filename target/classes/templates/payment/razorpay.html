@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - DhasuZone</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .payment-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            padding: var(--spacing-lg);
+            text-align: center;
+        }
+        
+        .payment-header {
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .payment-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .payment-details {
+            margin-bottom: var(--spacing-lg);
+            text-align: left;
+        }
+        
+        .payment-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--spacing-sm) 0;
+            border-bottom: 1px solid var(--gray-light);
+        }
+        
+        .payment-detail:last-child {
+            border-bottom: none;
+            margin-top: var(--spacing-sm);
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        #razorpay-button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-quick);
+        }
+        
+        #razorpay-button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="/" class="navbar-brand">Dhasu<span>Zone</span></a>
+                
+                <button class="navbar-toggler">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a href="/products" class="nav-link">Products</a>
+                        <div class="dropdown-menu">
+                            <a href="/products/category/Electronics" class="dropdown-item">Electronics</a>
+                            <a href="/products/category/Clothing" class="dropdown-item">Clothing</a>
+                            <a href="/products/category/Books" class="dropdown-item">Books</a>
+                            <a href="/products/category/Home & Kitchen" class="dropdown-item">Home & Kitchen</a>
+                            <a href="/products/category/Sports & Outdoors" class="dropdown-item">Sports & Outdoors</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/about" class="nav-link">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/contact" class="nav-link">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/cart" class="nav-link active">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-count" th:text="${cart.items.size()}">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/login" class="nav-link">
+                            <i class="fas fa-user"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Payment -->
+    <div class="container">
+        <div class="payment-container">
+            <div class="payment-header">
+                <div class="payment-icon">
+                    <i class="fas fa-credit-card"></i>
+                </div>
+                <h1>Complete Your Payment</h1>
+                <p>Your order is almost ready! Please complete the payment to confirm your purchase.</p>
+            </div>
+            
+            <div class="payment-details">
+                <div class="payment-detail">
+                    <div class="detail-label">Order ID</div>
+                    <div class="detail-value" th:text="${order.get('id')}">order_12345</div>
+                </div>
+                <div class="payment-detail">
+                    <div class="detail-label">Items</div>
+                    <div class="detail-value" th:text="${cart.items.size() + ' items'}">2 items</div>
+                </div>
+                <div class="payment-detail">
+                    <div class="detail-label">Subtotal</div>
+                    <div class="detail-value" th:text="'₹' + ${cart.total}">₹19,998</div>
+                </div>
+                <div class="payment-detail">
+                    <div class="detail-label">Shipping</div>
+                    <div class="detail-value" th:text="${cart.total.compareTo(new java.math.BigDecimal(499)) > 0 ? 'FREE' : '₹99'}">FREE</div>
+                </div>
+                <div class="payment-detail">
+                    <div class="detail-label">Tax (GST 18%)</div>
+                    <div class="detail-value" th:text="'₹' + ${cart.total.multiply(new java.math.BigDecimal('0.18')).setScale(2, java.math.RoundingMode.HALF_UP)}">₹3,599.64</div>
+                </div>
+                <div class="payment-detail">
+                    <div class="detail-label">Total</div>
+                    <div class="detail-value" th:with="shipping=${cart.total.compareTo(new java.math.BigDecimal(499)) > 0 ? new java.math.BigDecimal(0) : new java.math.BigDecimal(99)}" th:text="'₹' + ${cart.total.add(shipping).add(cart.total.multiply(new java.math.BigDecimal('0.18'))).setScale(2, java.math.RoundingMode.HALF_UP)}">₹23,597.64</div>
+                </div>
+            </div>
+            
+            <button id="razorpay-button">Pay Now</button>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <a href="/" class="footer-logo">Dhasu<span>Zone</span></a>
+                    <p>Your premium shopping destination for all your needs. We offer high-quality products at competitive prices.</p>
+                    
+                    <div class="social-icons">
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <h4 class="footer-title">Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/products">Products</a></li>
+                        <li><a href="/about">About Us</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                        <li><a href="/products?sale=true">Special Offers</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4 class="footer-title">Customer Service</h4>
+                    <ul>
+                        <li><a href="/faq">FAQ</a></li>
+                        <li><a href="/shipping">Shipping Policy</a></li>
+                        <li><a href="/returns">Returns & Refunds</a></li>
+                        <li><a href="/terms">Terms & Conditions</a></li>
+                        <li><a href="/privacy">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-contact">
+                    <h4 class="footer-title">Contact Us</h4>
+                    <ul>
+                        <li>
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>123 Shopping Street, Bengaluru, India</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-phone-alt"></i>
+                            <span>+91 1800-123-4567</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-envelope"></i>
+                            <span>info@dhasuzone.com</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-clock"></i>
+                            <span>Mon-Sat: 9:00 AM - 8:00 PM</span>
+                        </li>
+                    </ul>
+                    
+                    <div class="payment-methods">
+                        <div class="payment-method">
+                            <img src="https://cdn-icons-png.flaticon.com/128/196/196578.png" alt="Visa">
+                        </div>
+                        <div class="payment-method">
+                            <img src="https://cdn-icons-png.flaticon.com/128/196/196561.png" alt="MasterCard">
+                        </div>
+                        <div class="payment-method">
+                            <img src="https://cdn-icons-png.flaticon.com/128/217/217455.png" alt="RuPay">
+                        </div>
+                        <div class="payment-method">
+                            <img src="https://cdn-icons-png.flaticon.com/128/174/174861.png" alt="UPI">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; 2025 DhasuZone. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Razorpay Integration -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script th:inline="javascript">
+        document.getElementById('razorpay-button').onclick = function() {
+            var options = {
+                "key": [[${razorpayKeyId}]],
+                "amount": [[${order.get('amount')}]],
+                "currency": "INR",
+                "name": "DhasuZone",
+                "description": "Order Payment",
+                "image": "https://cdn-icons-png.flaticon.com/512/6681/6681204.png",
+                "order_id": [[${order.get('id')}]],
+                "handler": function (response) {
+                    // Submit the form with payment details
+                    document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
+                    document.getElementById('razorpay_order_id').value = response.razorpay_order_id;
+                    document.getElementById('razorpay_signature').value = response.razorpay_signature;
+                    document.getElementById('paymentForm').submit();
+                },
+                "prefill": {
+                    "name": "Customer Name",
+                    "email": "customer@example.com",
+                    "contact": "9999999999"
+                },
+                "theme": {
+                    "color": "#6A0DAD"
+                }
+            };
+            var rzp1 = new Razorpay(options);
+            rzp1.open();
+            return false;
+        };
+    </script>
+    
+    <!-- Hidden form to submit payment details -->
+    <form id="paymentForm" action="/payment/complete" method="post" style="display: none;">
+        <input type="hidden" id="razorpay_payment_id" name="razorpay_payment_id">
+        <input type="hidden" id="razorpay_order_id" name="razorpay_order_id">
+        <input type="hidden" id="razorpay_signature" name="razorpay_signature">
+    </form>
+    
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>
